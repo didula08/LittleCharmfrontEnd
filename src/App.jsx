@@ -11,6 +11,8 @@ import { Toaster } from 'react-hot-toast';
 
 import { CartProvider } from './context/CartContext';
 
+//do change
+
 function App() {
   return (
     <CartProvider>
