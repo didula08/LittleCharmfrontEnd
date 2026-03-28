@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import ProductCard from "./ProductCard.jsx";
+import ProductCard from "./productCard.jsx";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
