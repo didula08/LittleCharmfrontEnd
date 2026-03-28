@@ -6,6 +6,7 @@ export default function Header() {
   const { cartCount } = useCart();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,6 +15,20 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Close menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  // Prevent scrolling when menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isMenuOpen]);
 
   // The header should be solid if we are NOT on the home page OR if we've scrolled down.
   const isHomePage = location.pathname === "/";
@@ -24,7 +39,6 @@ export default function Header() {
     { name: "Products", path: "/products" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
-    { name: "Cart", path: "/cart" },
   ];
 
   return (
@@ -33,27 +47,41 @@ export default function Header() {
         ? "bg-white/95 backdrop-blur-md border-b border-black/5 shadow-sm py-3" 
         : "bg-black/20 backdrop-blur-md border-b border-white/10 py-5"
     }`}>
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
+        
+        {/* Mobile Menu Button - Left Side */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className={`md:hidden p-2 -ml-2 transition-colors ${
+            headerSolid ? "text-primary" : "text-white"
+          }`}
+          aria-label="Toggle menu"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d={isMenuOpen ? "M6 18 18 6M6 6l12 12" : "M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"} />
+          </svg>
+        </button>
+
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-2 md:gap-3">
           <img
             src="/logo1.png"
             alt="Logo"
-            className={`w-10 h-10 object-cover rounded-full border transition-colors ${
+            className={`w-8 h-8 md:w-10 md:h-10 object-cover rounded-full border transition-colors ${
               headerSolid ? "border-black/10" : "border-white/10 hover:border-white/30"
             }`}
             onError={(e) => {
               e.target.src = "https://ui-avatars.com/api/?name=LC&background=EBD5AB&color=1B211A";
             }}
           />
-          <span className={`text-xl md:text-2xl font-bold tracking-tight transition-colors ${
+          <span className={`text-lg md:text-2xl font-bold tracking-tight transition-colors ${
             headerSolid ? "text-primary" : "text-white drop-shadow-md"
           }`}>
             LittleCharm
           </span>
         </Link>
 
-        {/* Navigation */}
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8 lg:gap-10">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
@@ -79,7 +107,7 @@ export default function Header() {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-1 md:gap-4">
           <Link
             to="/cart"
             className={`relative p-2 transition-colors flex items-center justify-center transform hover:scale-105 ${
@@ -110,6 +138,45 @@ export default function Header() {
           </Link>
         </div>
       </div>
+
+      {/* Mobile Menu Sidebar */}
+      <div className={`fixed inset-0 z-40 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        {/* Backdrop */}
+        <div 
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={() => setIsMenuOpen(false)}
+        />
+        
+        {/* Sidebar Content */}
+        <div className="absolute top-0 left-0 h-full w-[280px] bg-white shadow-2xl flex flex-col p-6 pt-20">
+          <nav className="flex flex-col gap-6">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
+              return (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={`text-lg font-semibold py-2 border-b border-black/5 transition-colors ${
+                    isActive ? "text-secondary pl-2" : "text-primary/70"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+            <Link
+              to="/login"
+              className="text-lg font-semibold py-2 border-b border-black/5 text-primary/70"
+            >
+              Sign In
+            </Link>
+          </nav>
+          
+          <div className="mt-auto pt-10 pb-6 border-t border-black/5 text-center">
+            <p className="text-sm text-primary/50 font-medium">© 2026 LittleCharm</p>
+          </div>
+        </div>
+      </div>
     </header>
   );
-}
+}

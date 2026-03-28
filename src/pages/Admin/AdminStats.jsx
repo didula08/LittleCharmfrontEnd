@@ -147,7 +147,7 @@ export default function AdminStats() {
         />
         <StatCard 
           title="Total Revenue" 
-          value={`LKR ${parseFloat(stats.totalRevenue).toLocaleString()}`}
+          value={`Rs. ${parseFloat(stats.totalRevenue).toLocaleString()}`}
           icon={<FaDollarSign />} 
           color="bg-green-500 text-green-500"
           trend="up"
@@ -157,14 +157,14 @@ export default function AdminStats() {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white p-8 rounded-2xl border border-black/5 shadow-sm">
+        <div className="lg:col-span-2 bg-white p-4 md:p-8 rounded-2xl border border-black/5 shadow-sm">
           <div className="flex justify-between items-center mb-8">
             <div>
               <h3 className="font-bold text-primary">Revenue Overview</h3>
               <p className="text-xs text-gray-400">Sales performance over time</p>
             </div>
           </div>
-          <div className="h-[300px] w-full">
+          <div className="h-[250px] md:h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={stats.salesData}>
                 <defs>
@@ -178,20 +178,20 @@ export default function AdminStats() {
                   dataKey="date" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{fill: '#9CA3AF', fontSize: 12}}
+                  tick={{fill: '#9CA3AF', fontSize: 10}}
                   dy={10}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{fill: '#9CA3AF', fontSize: 12}}
+                  tick={{fill: '#9CA3AF', fontSize: 10}}
                 />
                 <Tooltip 
                   contentStyle={{ 
                     borderRadius: '12px', 
                     border: 'none', 
                     boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                    fontSize: '12px'
+                    fontSize: '11px'
                   }} 
                 />
                 <Area 
@@ -208,36 +208,36 @@ export default function AdminStats() {
         </div>
 
         {/* Low Stock Widget */}
-        <div className="bg-white p-8 rounded-2xl border border-black/5 shadow-sm">
+        <div className="bg-white p-6 md:p-8 rounded-2xl border border-black/5 shadow-sm">
           <div className="flex items-center gap-2 mb-6">
-            <div className="p-2 bg-red-100 text-red-500 rounded-lg">
+            <div className="p-2 bg-red-100 text-red-500 rounded-lg shrink-0">
               <FaExclamationTriangle />
             </div>
             <div>
               <h3 className="font-bold text-primary">Low Stock Alerts</h3>
-              <p className="text-xs text-gray-400">Products needing attention</p>
+              <p className="text-xs text-gray-400">Inventory attention</p>
             </div>
           </div>
           
           <div className="space-y-4">
             {stats.lowStockProducts.length > 0 ? stats.lowStockProducts.map((product) => (
               <div key={product.productId} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-black/5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-white p-1">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-lg bg-white p-1 shrink-0">
                     <img src={product.image[0]} alt="" className="w-full h-full object-cover rounded-md" />
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-primary truncate max-w-[120px]">{product.name}</p>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-primary truncate">{product.name}</p>
                     <p className="text-[10px] text-gray-400">Stock: {product.stock}</p>
                   </div>
                 </div>
-                <div className={`px-2 py-1 rounded-full text-[10px] font-bold ${product.stock === 0 ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'}`}>
+                <div className={`px-2 py-1 rounded-full text-[10px] font-bold shrink-0 ${product.stock === 0 ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'}`}>
                   {product.stock === 0 ? 'Out' : 'Low'}
                 </div>
               </div>
             )) : (
               <div className="py-12 text-center text-gray-300 italic text-sm">
-                All inventory levels healthy
+                Levels healthy
               </div>
             )}
           </div>
@@ -246,15 +246,15 @@ export default function AdminStats() {
 
       {/* Recent Orders Section */}
       <div className="bg-white rounded-2xl border border-black/5 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-black/5 flex justify-between items-center bg-gray-50/50">
+        <div className="p-4 md:p-6 border-b border-black/5 flex justify-between items-center bg-gray-50/50">
           <div className="flex items-center gap-2">
             <FaHistory className="text-gray-400" />
             <h3 className="font-bold text-primary">Recent Orders</h3>
           </div>
-          <button className="text-xs font-bold text-accent hover:underline cursor-pointer">View All Orders</button>
+          <button onClick={() => navigate('/admin/orders')} className="text-[10px] md:text-xs font-bold text-accent hover:underline cursor-pointer uppercase tracking-widest">View All</button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
+          <table className="w-full text-left min-w-[700px] md:min-w-0">
             <thead>
               <tr className="text-[10px] uppercase tracking-wider text-gray-400 font-bold border-b border-black/5">
                 <th className="px-6 py-4">Order ID</th>
@@ -268,8 +268,8 @@ export default function AdminStats() {
               {stats.recentOrders.length > 0 ? stats.recentOrders.map((order) => (
                 <tr key={order.orderId} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4 text-xs font-mono font-bold text-primary">#{order.orderId}</td>
-                  <td className="px-6 py-4 font-medium text-xs text-gray-600">{order.name}</td>
-                  <td className="px-6 py-4 font-bold text-xs text-primary">LKR {order.total?.toLocaleString()}</td>
+                  <td className="px-6 py-4 font-medium text-xs text-gray-600 truncate max-w-[150px]">{order.name}</td>
+                  <td className="px-6 py-4 font-bold text-xs text-primary">Rs. {order.total?.toLocaleString()}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
                       order.status === 'delivered' ? 'bg-green-100 text-green-600' :
@@ -285,7 +285,7 @@ export default function AdminStats() {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-gray-400 italic text-sm">No recent orders found</td>
+                  <td colSpan="5" className="px-6 py-8 text-center text-gray-400 italic text-sm">No recent orders</td>
                 </tr>
               )}
             </tbody>

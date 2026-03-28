@@ -18,76 +18,103 @@ export default function ProductOverviewPage() {
     axios
       .get(import.meta.env.VITE_BACKEND_URL + "/products/" + productId)
       .then((response) => {
-        console.log(response.data);
         setProduct(response.data);
         setStatus("success");
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         setStatus("error");
         toast.error("Failed to load product details");
       });
-  }, []); // left unchanged
+  }, [productId]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    if (e) e.stopPropagation();
     addToCart(product);
     toast.success(`${product.name} added to cart!`);
   };
 
+  const handleBuyNow = () => {
+    addToCart(product);
+    navigate("/checkout");
+  };
+
+  if (status === "loading") return <div className="py-20 flex justify-center"><Loading /></div>;
+  if (status === "error") return <div className="py-20 text-center font-bold text-red-500">Error loading product.</div>;
+
   return (
-    <>
-      {status == "success" && (
-        <div className="w-full h-full flex">
-          <div className="w-[50%] h-full flex justify-center items-center">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 md:py-10">
+      {status === "success" && product && (
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
+          {/* Image Section */}
+          <div className="w-full lg:w-1/2 flex justify-center items-center bg-gray-50 rounded-2xl overflow-hidden p-4 sm:p-8">
             <ImageSlider image={product.image} />
           </div>
-          <div className="w-[50%] h-full justify-center items-centerflex p-10">
-            <div className="w-[500px] h-[600px] flex flex-col items-center">
 
-              <h1 className="w-full text-center text-4xl text-primary font-semibold">{product.name}
-                {
-                  product.altNames.map((altName,index)=>{
-                    return(
-                      <span key={index} className="text-4xl text-gery-200">{" | "+altName}</span>
-                    )
-                  })
-                }
-              </h1>
+          {/* Details Section */}
+          <div className="w-full lg:w-1/2 flex flex-col">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-primary/40 bg-primary/5 px-2 py-1 rounded">
+                Ref: {product.productId}
+              </span>
+            </div>
 
-              <h1 className="w-full text-center my-2 text-md text-gray-600 font-semibold">{product.productId}</h1>
-              <p className="w-full text-center my-2 text-md text-gray-600 font-semibold">{product.description}</p>
-              {
-                product.labelledPrice > product.price ?
-                <div>
-                  <span className="text-4xl mx-4 text-secondary line-through">{product.labelledPrice.toFixed(2)}</span>
-                  <span className="text-4xl mx-4 text-primary font-bold">{product.price.toFixed(2)}</span>
-                </div>
-                :<span className="text-4xl mx-4 font-bold text-primary">{product.price.toFixed(2)}</span>
-              }
-              <div className="w-full flex justify-center items-center mt-8">
+            <h1 className="text-3xl md:text-5xl font-light text-primary mb-2">
+              {product.name}
+              {product.altNames && product.altNames.length > 0 && (
+                <span className="text-primary/30 font-extralight ml-3">
+                  | {product.altNames.join(" | ")}
+                </span>
+              )}
+            </h1>
 
-                <button 
-                  onClick={handleAddToCart}
-                  className="bg-primary text-white px-8 py-3 rounded-full m-2 hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg shadow-primary/20 font-medium"
-                >
-                  Add to Cart
-                </button>
-                <button 
-                  onClick={() => {
-                    handleAddToCart();
-                    navigate("/checkout");
-                  }}
-                  className="border-2 border-primary text-primary px-8 py-3 rounded-full m-2 hover:bg-primary hover:text-white hover:scale-105 transition-all duration-300 font-medium"
-                >
-                  Buy Now
-                </button>
+            <div className="flex items-center gap-4 my-6">
+              {product.labelledPrice > product.price ? (
+                <>
+                   <span className="text-3xl font-bold text-primary">Rs. {product.price.toLocaleString()}</span>
+                   <span className="text-xl text-primary/30 line-through">Rs. {product.labelledPrice.toLocaleString()}</span>
+                   <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">
+                     Save {Math.round(((product.labelledPrice - product.price) / product.labelledPrice) * 100)}%
+                   </span>
+                </>
+              ) : (
+                <span className="text-3xl font-bold text-primary">Rs. {product.price.toLocaleString()}</span>
+              )}
+            </div>
 
-              </div>
+            <p className="text-primary/70 text-lg leading-relaxed font-light mb-8 border-t border-black/5 pt-6">
+              {product.description}
+            </p>
 
+            <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+              <button 
+                onClick={handleAddToCart}
+                className="flex-1 bg-primary text-white px-8 py-4 rounded-lg hover:bg-secondary transition-all duration-300 shadow-xl shadow-black/10 font-bold uppercase tracking-widest text-xs"
+              >
+                Add to Cart
+              </button>
+              <button 
+                onClick={handleBuyNow}
+                className="flex-1 border-2 border-primary text-primary px-8 py-4 rounded-lg hover:bg-primary hover:text-white transition-all duration-300 font-bold uppercase tracking-widest text-xs"
+              >
+                Buy Now
+              </button>
+            </div>
+
+            {/* Features list or additional info could go here */}
+            <div className="grid grid-cols-2 gap-4 mt-12 border-t border-black/5 pt-8">
+               <div className="flex flex-col">
+                 <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-1">Shipping</span>
+                 <p className="text-sm font-medium text-primary">Free delivery on orders over Rs. 5,000</p>
+               </div>
+               <div className="flex flex-col">
+                 <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40 mb-1">Handmade</span>
+                 <p className="text-sm font-medium text-primary">Each piece is uniquely sculpted</p>
+               </div>
             </div>
           </div>
         </div>
-      ) }
-    </>
+      )}
+    </div>
   );
 }
