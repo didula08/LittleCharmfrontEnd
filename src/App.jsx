@@ -2,9 +2,9 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminPage from './pages/AdminPage';
-import Login from './pages/login';
+import Login from './pages/Login';
 import SignUp from './pages/UserRegister';
-import TestPage from './pages/testPage';
+import TestPage from './pages/TestPage';
 import MediaUpload from './utils/MediaUpload';
 import Home from './pages/Home';
 import { Toaster } from 'react-hot-toast';
