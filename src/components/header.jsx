@@ -140,40 +140,60 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu Sidebar */}
-      <div className={`fixed inset-0 z-40 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <div className={`fixed inset-0 z-[60] md:hidden transition-all duration-300 ${isMenuOpen ? "visible" : "invisible"}`}>
         {/* Backdrop */}
         <div 
-          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isMenuOpen ? "opacity-100" : "opacity-0"}`}
           onClick={() => setIsMenuOpen(false)}
         />
         
         {/* Sidebar Content */}
-        <div className="absolute top-0 left-0 h-full w-[280px] bg-white shadow-2xl flex flex-col p-6 pt-20">
-          <nav className="flex flex-col gap-6">
+        <div className={`absolute top-0 left-0 h-full w-[280px] bg-white shadow-2xl flex flex-col p-6 pt-10 transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-black/5">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-primary font-bold">LC</div>
+              <span className="font-bold text-primary">LittleCharm</span>
+            </div>
+            <button onClick={() => setIsMenuOpen(false)} className="p-2 text-primary/50 hover:text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <nav className="flex flex-col gap-2">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
               return (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`text-lg font-semibold py-2 border-b border-black/5 transition-colors ${
-                    isActive ? "text-secondary pl-2" : "text-primary/70"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`text-lg font-bold px-4 py-3 rounded-xl transition-all ${
+                    isActive 
+                      ? "bg-accent/20 text-secondary translate-x-1" 
+                      : "text-primary/70 hover:bg-gray-50 hover:text-primary"
                   }`}
                 >
                   {link.name}
                 </Link>
               );
             })}
+            <div className="h-px bg-black/5 my-4"></div>
             <Link
               to="/login"
-              className="text-lg font-semibold py-2 border-b border-black/5 text-primary/70"
+              onClick={() => setIsMenuOpen(false)}
+              className="text-lg font-bold px-4 py-3 rounded-xl text-primary/70 hover:bg-gray-50 hover:text-primary flex items-center gap-3"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 opacity-50">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
               Sign In
             </Link>
           </nav>
           
-          <div className="mt-auto pt-10 pb-6 border-t border-black/5 text-center">
-            <p className="text-sm text-primary/50 font-medium">© 2026 LittleCharm</p>
+          <div className="mt-auto pt-10 pb-6 text-center">
+            <p className="text-xs text-primary/30 font-medium uppercase tracking-widest">© 2026 LittleCharm</p>
           </div>
         </div>
       </div>
